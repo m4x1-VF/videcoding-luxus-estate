@@ -1,14 +1,14 @@
 import Image from "next/image";
-import { Property } from "../lib/mock-data";
+import { DbProperty } from "../lib/supabase";
 
-export default function PropertyCard({ property, hiddenClasses = "" }: { property: Property, hiddenClasses?: string }) {
+export default function PropertyCard({ property, hiddenClasses = "" }: { property: DbProperty, hiddenClasses?: string }) {
   return (
     <article className={`bg-white rounded-xl overflow-hidden shadow-card hover:shadow-soft transition-all duration-300 group cursor-pointer h-full flex flex-col ${hiddenClasses}`}>
       <div className="relative aspect-[4/3] overflow-hidden">
         <Image 
           alt={property.title} 
           className="object-cover transition-transform duration-500 group-hover:scale-110" 
-          src={property.imageUrl}
+          src={property.image_url}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
@@ -25,7 +25,7 @@ export default function PropertyCard({ property, hiddenClasses = "" }: { propert
         <div className="flex justify-between items-baseline mb-2">
           <h3 className="font-bold text-lg text-nordic-dark">
             {property.price}
-            {property.isRental && <span className="text-sm font-normal text-nordic-muted">/mo</span>}
+            {property.is_rental && <span className="text-sm font-normal text-nordic-muted">/mo</span>}
           </h3>
         </div>
         <h4 className="text-nordic-dark font-medium truncate mb-1">{property.title}</h4>

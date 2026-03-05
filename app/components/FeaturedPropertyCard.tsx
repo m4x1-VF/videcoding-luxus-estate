@@ -1,14 +1,14 @@
 import Image from "next/image";
-import { Property } from "../lib/mock-data";
+import { DbProperty } from "../lib/supabase";
 
-export default function FeaturedPropertyCard({ property }: { property: Property }) {
+export default function FeaturedPropertyCard({ property }: { property: DbProperty }) {
   return (
     <div className="group relative rounded-xl overflow-hidden shadow-soft bg-white cursor-pointer">
       <div className="aspect-[4/3] w-full overflow-hidden relative">
         <Image 
           alt={property.title} 
           className="object-cover transition-transform duration-700 group-hover:scale-105" 
-          src={property.imageUrl}
+          src={property.image_url}
           fill
           sizes="(max-width: 1024px) 100vw, 50vw"
         />

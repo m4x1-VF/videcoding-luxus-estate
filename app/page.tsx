@@ -1,9 +1,22 @@
 import Navbar from "./components/Navbar";
 import FeaturedPropertyCard from "./components/FeaturedPropertyCard";
 import PropertyCard from "./components/PropertyCard";
-import { featuredProperties, newInMarketProperties } from "./lib/mock-data";
+import Pagination from "./components/Pagination";
+import { getFeaturedProperties, getPaginatedProperties } from "./lib/supabase";
 
-export default function Home() {
+interface HomeProps {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function Home({ searchParams }: HomeProps) {
+  const params = await searchParams;
+  const currentPage = Math.max(1, parseInt(params.page ?? "1", 10));
+
+  const [featured, paginated] = await Promise.all([
+    getFeaturedProperties(),
+    getPaginatedProperties(currentPage),
+  ]);
+
   return (
     <>
       <Navbar />
@@ -60,7 +73,7 @@ export default function Home() {
                 </a>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {featuredProperties.map(property => (
+                {featured.map(property => (
                     <FeaturedPropertyCard key={property.id} property={property} />
                 ))}
             </div>
@@ -79,20 +92,15 @@ export default function Home() {
                 </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {newInMarketProperties.map((property, index) => {
-                    let hiddenClasses = "";
-                    if (index === 4) hiddenClasses = "hidden xl:flex";
-                    if (index === 5) hiddenClasses = "hidden lg:flex";
-                    return (
-                        <PropertyCard key={property.id} property={property} hiddenClasses={hiddenClasses} />
-                    );
-                })}
+                {paginated.properties.map((property) => (
+                    <PropertyCard key={property.id} property={property} />
+                ))}
             </div>
-            <div className="mt-12 text-center">
-                <button className="px-8 py-3 bg-white border border-nordic-dark/10 hover:border-mosque hover:text-mosque text-nordic-dark font-medium rounded-lg transition-all hover:shadow-md">
-                    Load more properties
-                </button>
-            </div>
+            <Pagination
+              currentPage={paginated.currentPage}
+              totalPages={paginated.totalPages}
+              totalCount={paginated.totalCount}
+            />
         </section>
       </main>
     </>
