@@ -4,6 +4,9 @@ import PropertyCard from "./components/PropertyCard";
 import Pagination from "./components/Pagination";
 import { getFeaturedProperties, getPaginatedProperties } from "./lib/supabase";
 
+// Always fetch fresh data so slugs are reflected immediately
+export const dynamic = "force-dynamic";
+
 interface HomeProps {
   searchParams: Promise<{ page?: string }>;
 }

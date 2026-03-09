@@ -16,6 +16,8 @@ export interface DbProperty {
   baths: number;
   area: string;
   image_url: string;
+  images: string[] | null;
+  slug: string | null;
   is_rental: boolean;
   is_featured: boolean;
   created_at: string;
@@ -67,4 +69,29 @@ export async function getPaginatedProperties(page: number): Promise<{
     totalPages,
     currentPage: page,
   };
+}
+
+// UUID regex pattern
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export async function getPropertyBySlugOrId(slugOrId: string): Promise<DbProperty | null> {
+  // If it looks like a UUID, do a direct id lookup (no slug query — prevents type cast errors)
+  if (UUID_REGEX.test(slugOrId)) {
+    const { data, error } = await supabase
+      .from("properties")
+      .select("*")
+      .eq("id", slugOrId)
+      .maybeSingle();
+    if (error) console.error(`Error fetching property by id (${slugOrId}):`, error);
+    return data;
+  }
+
+  // Otherwise treat it as a slug — query only the slug column (TEXT)
+  const { data, error } = await supabase
+    .from("properties")
+    .select("*")
+    .eq("slug", slugOrId)
+    .maybeSingle();
+  if (error) console.error(`Error fetching property by slug (${slugOrId}):`, error);
+  return data;
 }

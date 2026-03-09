@@ -1,9 +1,15 @@
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
 import { DbProperty } from "../lib/supabase";
+import { buildPropertyUrl } from "../lib/slug";
 
 export default function FeaturedPropertyCard({ property }: { property: DbProperty }) {
+  const href = buildPropertyUrl(property);
+
   return (
-    <div className="group relative rounded-xl overflow-hidden shadow-soft bg-white cursor-pointer">
+    <Link href={href} className="block group relative rounded-xl overflow-hidden shadow-soft bg-white cursor-pointer transition-all duration-300">
       <div className="aspect-[4/3] w-full overflow-hidden relative">
         <Image 
           alt={property.title} 
@@ -17,7 +23,10 @@ export default function FeaturedPropertyCard({ property }: { property: DbPropert
             {property.status}
           </div>
         )}
-        <button className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-nordic-dark hover:bg-mosque hover:text-white transition-all">
+        <button 
+          onClick={(e) => e.preventDefault()}
+          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-nordic-dark hover:bg-mosque hover:text-white transition-all"
+        >
           <span className="material-icons text-xl">favorite_border</span>
         </button>
         <div className="absolute bottom-0 inset-x-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
@@ -44,6 +53,6 @@ export default function FeaturedPropertyCard({ property }: { property: DbPropert
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

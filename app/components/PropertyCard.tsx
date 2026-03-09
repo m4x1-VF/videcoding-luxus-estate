@@ -1,9 +1,15 @@
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
 import { DbProperty } from "../lib/supabase";
+import { buildPropertyUrl } from "../lib/slug";
 
 export default function PropertyCard({ property, hiddenClasses = "" }: { property: DbProperty, hiddenClasses?: string }) {
+  const href = buildPropertyUrl(property);
+
   return (
-    <article className={`bg-white rounded-xl overflow-hidden shadow-card hover:shadow-soft transition-all duration-300 group cursor-pointer h-full flex flex-col ${hiddenClasses}`}>
+    <Link href={href} className={`bg-white rounded-xl overflow-hidden shadow-card hover:shadow-soft transition-all duration-300 group cursor-pointer h-full flex flex-col ${hiddenClasses} block`}>
       <div className="relative aspect-[4/3] overflow-hidden">
         <Image 
           alt={property.title} 
@@ -12,7 +18,10 @@ export default function PropertyCard({ property, hiddenClasses = "" }: { propert
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
-        <button className="absolute top-3 right-3 p-2 bg-white/90 rounded-full hover:bg-mosque hover:text-white transition-colors text-nordic-dark z-10">
+        <button 
+          onClick={(e) => e.preventDefault()}
+          className="absolute top-3 right-3 p-2 bg-white/90 rounded-full hover:bg-mosque hover:text-white transition-colors text-nordic-dark z-10"
+        >
           <span className="material-icons text-lg">favorite_border</span>
         </button>
         {property.status && (
@@ -42,6 +51,6 @@ export default function PropertyCard({ property, hiddenClasses = "" }: { propert
           </div>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }
