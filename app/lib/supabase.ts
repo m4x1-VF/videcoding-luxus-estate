@@ -23,14 +23,15 @@ export interface DbProperty {
   created_at: string;
 }
 
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 8;
 
 export async function getFeaturedProperties(): Promise<DbProperty[]> {
   const { data, error } = await supabase
     .from("properties")
     .select("*")
     .eq("is_featured", true)
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: true })
+    .limit(4);
 
   if (error) {
     console.error("Error fetching featured properties:", error);
@@ -39,7 +40,18 @@ export async function getFeaturedProperties(): Promise<DbProperty[]> {
   return data ?? [];
 }
 
-export async function getPaginatedProperties(page: number): Promise<{
+export interface PropertyFilters {
+  query?: string;
+  type?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  beds?: number;
+  baths?: number;
+  status?: string;
+  amenities?: string[];
+}
+
+export async function getPaginatedProperties(page: number, filters?: PropertyFilters): Promise<{
   properties: DbProperty[];
   totalCount: number;
   totalPages: number;
@@ -48,12 +60,37 @@ export async function getPaginatedProperties(page: number): Promise<{
   const from = (page - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;
 
-  const { data, error, count } = await supabase
+  let query = supabase
     .from("properties")
     .select("*", { count: "exact" })
     .eq("is_featured", false)
     .order("created_at", { ascending: true })
     .range(from, to);
+
+  if (filters?.query) {
+    query = query.or(`title.ilike.%${filters.query}%,location.ilike.%${filters.query}%`);
+  }
+  if (filters?.type && filters.type !== "All" && filters.type !== "Any Type") {
+    query = query.ilike("title", `%${filters.type}%`);
+  }
+  if (filters?.minPrice) {
+    query = query.gte("price_numeric", filters.minPrice);
+  }
+  if (filters?.maxPrice) {
+    query = query.lte("price_numeric", filters.maxPrice);
+  }
+  if (filters?.beds) {
+    query = query.gte("beds", filters.beds);
+  }
+  if (filters?.baths) {
+    query = query.gte("baths", filters.baths);
+  }
+  if (filters?.status && filters.status !== "All") {
+    if (filters.status === "Buy") query = query.eq("is_rental", false);
+    if (filters.status === "Rent") query = query.eq("is_rental", true);
+  }
+
+  const { data, error, count } = await query;
 
   if (error) {
     console.error("Error fetching paginated properties:", error);
