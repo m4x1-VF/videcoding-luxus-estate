@@ -34,8 +34,12 @@ export default function LanguageSelector() {
         className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-nordic-dark/10 hover:border-mosque/40 hover:bg-mosque/5 transition-all text-sm font-medium text-nordic-dark"
         aria-label="Select language"
       >
-        <span className="text-base leading-none">{current.flag}</span>
-        <span className="hidden sm:inline tracking-wide uppercase text-xs font-semibold text-nordic-dark/70">
+        <img 
+          src={current.flag} 
+          alt={current.label} 
+          className="w-5 h-3.5 object-cover rounded-[2px] shadow-sm border border-black/5"
+        />
+        <span className="hidden sm:inline tracking-wide uppercase text-xs font-bold text-nordic-dark/70">
           {current.code}
         </span>
         <span
@@ -62,7 +66,11 @@ export default function LanguageSelector() {
                     : "text-nordic-dark hover:bg-gray-50"
                 }`}
               >
-                <span className="text-lg">{l.flag}</span>
+                <img 
+                  src={l.flag} 
+                  alt={l.label} 
+                  className="w-6 h-4 object-cover rounded-[2px] shadow-xs border border-black/5"
+                />
                 <span className="flex-1 text-left">{l.label}</span>
                 {isSelected && (
                   <span className="material-icons text-sm text-mosque">

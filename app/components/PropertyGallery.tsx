@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "../i18n";
 
 interface PropertyGalleryProps {
   images: string[];
@@ -11,6 +12,7 @@ interface PropertyGalleryProps {
 }
 
 export default function PropertyGallery({ images, title, isFeatured, status }: PropertyGalleryProps) {
+  const { t } = useTranslations();
   const [selectedImage, setSelectedImage] = useState(images[0]);
 
   return (
@@ -28,7 +30,7 @@ export default function PropertyGallery({ images, title, isFeatured, status }: P
         <div className="absolute top-4 left-4 flex gap-2">
           {isFeatured && (
             <span className="bg-mosque text-white text-xs font-medium px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-              Featured
+              {t.details.featured}
             </span>
           )}
           {status && (
@@ -39,7 +41,7 @@ export default function PropertyGallery({ images, title, isFeatured, status }: P
         </div>
         <button className="absolute bottom-4 right-4 bg-white/90 hover:bg-white text-nordic-dark px-4 py-2 rounded-lg text-sm font-medium shadow-lg backdrop-blur transition-all flex items-center gap-2">
           <span className="material-icons text-sm">grid_view</span>
-          View All {images.length} Photos
+          {t.details.viewPhotosCount.replace("{count}", images.length.toString())}
         </button>
       </div>
 

@@ -84,6 +84,7 @@ const en = {
   details: {
     featured: "Featured",
     viewPhotos: "View All Photos",
+    viewPhotosCount: "View All {count} Photos",
     topRated: "Top Rated Agent",
     scheduleVisit: "Schedule Visit",
     contactAgent: "Contact Agent",
@@ -99,6 +100,8 @@ const en = {
     calcMortgage: "Calculate Mortgage",
     readMore: "Read more",
     copyright: "© 2026 LuxeEstate Inc. All rights reserved.",
+    descriptionP1: "Experience modern luxury in this architecturally stunning home located in {location}. Designed with an emphasis on indoor-outdoor living, the residence features pristine spaces that flood the interiors with natural light.",
+    descriptionP2: "{title} represents a unique opportunity for discerning buyers seeking {beds} bedrooms and {baths} bathrooms of pure comfort, spanning over {area}. The open-concept kitchen is equipped with top-of-the-line appliances and custom cabinetry, perfect for culinary enthusiasts.",
   },
 } as const;
 

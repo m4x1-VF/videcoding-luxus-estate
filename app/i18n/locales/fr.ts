@@ -86,6 +86,7 @@ const fr: Translations = {
   details: {
     featured: "En Vedette",
     viewPhotos: "Voir Toutes les Photos",
+    viewPhotosCount: "Voir toutes les {count} photos",
     topRated: "Agent de Premier Plan",
     scheduleVisit: "Planifier une Visite",
     contactAgent: "Contacter l'Agent",
@@ -101,6 +102,8 @@ const fr: Translations = {
     calcMortgage: "Calculer l'Hypothèque",
     readMore: "Lire plus",
     copyright: "© 2026 LuxeEstate Inc. Tous droits réservés.",
+    descriptionP1: "Découvrez le luxe moderne dans cette maison à l'architecture époustouflante située à {location}. Conçue en mettant l'accent sur la vie intérieure-extérieure, la résidence dispose d'espaces immaculés qui inondent les intérieurs de lumière naturelle.",
+    descriptionP2: "{title} représente une opportunité unique pour les acheteurs exigeants à la recherche de {beds} chambres et {baths} salles de bain de pur confort, s'étendant sur plus de {area}. La cuisine à aire ouverte est équipée d'appareils haut de gamme et d'armoires sur mesure, parfaites pour les passionnés de cuisine.",
   },
 };
 

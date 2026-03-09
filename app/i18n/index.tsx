@@ -54,6 +54,11 @@ export function LanguageProvider({
 }) {
   const [locale, setLocaleState] = useState<Locale>(initialLocale);
 
+  // Synchronize state with initialLocale if it changes on the server/parent
+  useEffect(() => {
+    setLocaleState(initialLocale);
+  }, [initialLocale]);
+
   // On mount, check the cookie to override the SSR-detected locale
   useEffect(() => {
     const cookieLocale = getLocaleCookie();
@@ -68,10 +73,14 @@ export function LanguageProvider({
     setLocaleCookie(newLocale);
   }, []);
 
+  const value = React.useMemo(() => ({
+    locale,
+    t: translations[locale],
+    setLocale
+  }), [locale, setLocale]);
+
   return (
-    <LanguageContext.Provider
-      value={{ locale, t: translations[locale], setLocale }}
-    >
+    <LanguageContext.Provider value={value}>
       {children}
     </LanguageContext.Provider>
   );

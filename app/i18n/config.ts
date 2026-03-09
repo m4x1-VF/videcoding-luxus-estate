@@ -2,9 +2,9 @@
 export type Locale = "en" | "es" | "fr";
 
 export const LOCALES: { code: Locale; label: string; flag: string }[] = [
-  { code: "en", label: "English", flag: "🇬🇧" },
-  { code: "es", label: "Español", flag: "🇪🇸" },
-  { code: "fr", label: "Français", flag: "🇫🇷" },
+  { code: "en", label: "English", flag: "https://flagcdn.com/w40/gb.png" },
+  { code: "es", label: "Español", flag: "https://flagcdn.com/w40/es.png" },
+  { code: "fr", label: "Français", flag: "https://flagcdn.com/w40/fr.png" },
 ];
 
 export const COOKIE_NAME = "luxe-locale";

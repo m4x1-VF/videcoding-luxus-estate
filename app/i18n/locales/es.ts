@@ -22,7 +22,7 @@ const es: Translations = {
   search: {
     headline: "Encuentra tu",
     headlineAccent: "santuario",
-    placeholder: "Buscar por ciudad, colonia o dirección...",
+    placeholder: "Buscar por ciudad, provincia o dirección...",
     button: "Buscar",
     filterChips: {
       all: "Todas",
@@ -37,16 +37,16 @@ const es: Translations = {
   filters: {
     title: "Filtros",
     location: "Ubicación",
-    locationPlaceholder: "Ciudad, colonia o dirección",
+    locationPlaceholder: "Ciudad, provincia o dirección",
     priceRange: "Rango de Precio",
     minPrice: "Precio Mínimo",
     maxPrice: "Precio Máximo",
     propertyType: "Tipo de Propiedad",
     anyType: "Cualquier Tipo",
-    bedrooms: "Recámaras",
+    bedrooms: "Habitaciones",
     bathrooms: "Baños",
     any: "Cualquiera",
-    amenities: "Amenidades y Características",
+    amenities: "Comodidades y Características",
     amenityList: {
       pool: "Alberca",
       gym: "Gimnasio",
@@ -63,7 +63,7 @@ const es: Translations = {
   status: {
     all: "Todas",
     buy: "Comprar",
-    rent: "Rentar",
+    rent: "Alquilar",
   },
 
   // Pagination
@@ -77,7 +77,7 @@ const es: Translations = {
 
   // Property card
   property: {
-    beds: "Recámaras",
+    beds: "Habitaciones",
     baths: "Baños",
     perMonth: "/mes",
   },
@@ -86,21 +86,24 @@ const es: Translations = {
   details: {
     featured: "Destacada",
     viewPhotos: "Ver Todas las Fotos",
+    viewPhotosCount: "Ver todas las {count} fotos",
     topRated: "Agente Destacado",
     scheduleVisit: "Programar Visita",
     contactAgent: "Contactar Agente",
     propertyFeatures: "Características",
-    bedrooms: "Recámaras",
+    bedrooms: "Habitaciones",
     bathrooms: "Baños",
     garage: "Cochera",
     aboutHome: "Acerca de esta casa",
-    amenities: "Amenidades",
+    amenities: "Comodidades",
     estPayment: "Pago Estimado",
     startingFrom: "Desde",
-    downPayment: "con 20% de enganche",
+    downPayment: "con 20% de entrada",
     calcMortgage: "Calcular Hipoteca",
     readMore: "Leer más",
     copyright: "© 2026 LuxeEstate Inc. Todos los derechos reservados.",
+    descriptionP1: "Experimente el lujo moderno en esta casa arquitectónicamente impresionante ubicada en {location}. Diseñada con énfasis en la vida interior-exterior, la residencia cuenta con espacios prístinos que inundan los interiores con luz natural.",
+    descriptionP2: "{title} representa una oportunidad única para compradores exigentes que buscan {beds} habitaciones y {baths} baños de pura comodidad, que abarcan más de {area}. La cocina de concepto abierto está equipada con electrodomésticos de alta gama y gabinetes personalizados, perfectos para los entusiastas de la cocina.",
   },
 };
 

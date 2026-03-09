@@ -217,12 +217,14 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
             <h2 className="text-lg font-semibold mb-4 text-nordic-dark">{t.details.aboutHome}</h2>
             <div className="prose prose-slate max-w-none text-nordic-muted leading-relaxed">
               <p className="mb-4">
-                Experience modern luxury in this architecturally stunning home located in {property.location}. 
-                Designed with an emphasis on indoor-outdoor living, the residence features pristine spaces that flood the interiors with natural light.
+                {t.details.descriptionP1.replace("{location}", property.location)}
               </p>
               <p>
-                {property.title} represents a unique opportunity for discerning buyers seeking {property.beds} bedrooms and {property.baths} bathrooms of pure comfort, spanning over {property.area}.
-                The open-concept kitchen is equipped with top-of-the-line appliances and custom cabinetry, perfect for culinary enthusiasts.
+                {t.details.descriptionP2
+                  .replace("{title}", property.title)
+                  .replace("{beds}", property.beds.toString())
+                  .replace("{baths}", property.baths.toString())
+                  .replace("{area}", property.area)}
               </p>
             </div>
             <button className="mt-4 text-mosque font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all">
