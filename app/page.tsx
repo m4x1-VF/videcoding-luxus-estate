@@ -5,6 +5,11 @@ import Pagination from "./components/Pagination";
 import SearchSection from "./components/SearchSection";
 import StatusTabs from "./components/StatusTabs";
 import { getFeaturedProperties, getPaginatedProperties } from "./lib/supabase";
+import { cookies } from "next/headers";
+import { getLocaleFromCookieHeader } from "./i18n/config";
+import en from "./i18n/locales/en";
+import es from "./i18n/locales/es";
+import fr from "./i18n/locales/fr";
 
 // Always fetch fresh data so slugs are reflected immediately
 export const dynamic = "force-dynamic";
@@ -13,7 +18,14 @@ interface HomeProps {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }
 
+const locales = { en, es, fr };
+
 export default async function Home({ searchParams }: HomeProps) {
+  const cookieStore = await cookies();
+  const rawLocale = cookieStore.get("luxe-locale")?.value ?? null;
+  const locale = getLocaleFromCookieHeader(rawLocale ? `luxe-locale=${rawLocale}` : null);
+  const t = locales[locale];
+
   const params = await searchParams;
   const currentPage = Math.max(1, parseInt(params.page ?? "1", 10));
 
@@ -46,11 +58,11 @@ export default async function Home({ searchParams }: HomeProps) {
           <section className="mb-16">
               <div className="flex items-end justify-between mb-8">
                   <div>
-                      <h2 className="text-2xl font-light text-nordic-dark">Featured Collections</h2>
-                      <p className="text-nordic-muted mt-1 text-sm">Curated properties for the discerning eye.</p>
+                      <h2 className="text-2xl font-light text-nordic-dark">{t.home.featuredTitle}</h2>
+                      <p className="text-nordic-muted mt-1 text-sm">{t.home.featuredSubtitle}</p>
                   </div>
                   <a className="hidden sm:flex items-center gap-1 text-sm font-medium text-mosque hover:opacity-70 transition-opacity" href="#">
-                      View all <span className="material-icons text-sm">arrow_forward</span>
+                      {t.home.viewAll} <span className="material-icons text-sm">arrow_forward</span>
                   </a>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -64,8 +76,8 @@ export default async function Home({ searchParams }: HomeProps) {
         <section>
             <div className="flex items-end justify-between mb-8">
                 <div>
-                    <h2 className="text-2xl font-light text-nordic-dark">New in Market</h2>
-                    <p className="text-nordic-muted mt-1 text-sm">Fresh opportunities added this week.</p>
+                    <h2 className="text-2xl font-light text-nordic-dark">{t.home.newInMarketTitle}</h2>
+                    <p className="text-nordic-muted mt-1 text-sm">{t.home.newInMarketSubtitle}</p>
                 </div>
                 <StatusTabs />
             </div>
@@ -84,3 +96,4 @@ export default async function Home({ searchParams }: HomeProps) {
     </>
   );
 }
+

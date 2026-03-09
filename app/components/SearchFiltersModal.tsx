@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "../i18n";
 
 interface SearchFiltersModalProps {
   isOpen: boolean;
@@ -9,13 +10,14 @@ interface SearchFiltersModalProps {
 }
 
 export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersModalProps) {
+  const { t } = useTranslations();
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [query, setQuery] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [type, setType] = useState("Any Type");
+  const [type, setType] = useState<string>(t.filters.anyType);
   const [beds, setBeds] = useState(0);
   const [baths, setBaths] = useState(0);
   const [amenities, setAmenities] = useState<string[]>([]);
@@ -26,7 +28,7 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
       setQuery(searchParams.get("query") || "");
       setMinPrice(searchParams.get("minPrice") || "");
       setMaxPrice(searchParams.get("maxPrice") || "");
-      setType(searchParams.get("type") || "Any Type");
+      setType(searchParams.get("type") || t.filters.anyType);
       setBeds(parseInt(searchParams.get("beds") || "0", 10));
       setBaths(parseInt(searchParams.get("baths") || "0", 10));
       const am = searchParams.getAll("amenities");
@@ -37,7 +39,7 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, searchParams]);
+  }, [isOpen, searchParams, t.filters.anyType]);
 
   if (!isOpen) return null;
 
@@ -53,7 +55,7 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
     if (query) params.set("query", query); else params.delete("query");
     if (minPrice) params.set("minPrice", minPrice.replace(/\D/g, "")); else params.delete("minPrice");
     if (maxPrice) params.set("maxPrice", maxPrice.replace(/\D/g, "")); else params.delete("maxPrice");
-    if (type && type !== "Any Type" && type !== "All") params.set("type", type); else params.delete("type");
+    if (type && type !== t.filters.anyType && type !== "All") params.set("type", type); else params.delete("type");
     if (beds > 0) params.set("beds", beds.toString()); else params.delete("beds");
     if (baths > 0) params.set("baths", baths.toString()); else params.delete("baths");
     
@@ -69,7 +71,7 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
     setQuery("");
     setMinPrice("");
     setMaxPrice("");
-    setType("Any Type");
+    setType(t.filters.anyType);
     setBeds(0);
     setBaths(0);
     setAmenities([]);
@@ -98,7 +100,7 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
       <main className="relative z-20 w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <header className="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-30">
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Filters</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">{t.filters.title}</h1>
           <button 
             onClick={onClose}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500"
@@ -112,7 +114,7 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
           {/* Section 1: Location */}
           <section>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-              Location
+              {t.filters.location}
             </label>
             <div className="relative group">
               <span className="material-icons absolute left-4 top-3.5 text-gray-400 group-focus-within:text-mosque transition-colors">
@@ -120,7 +122,7 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
               </span>
               <input 
                 className="w-full pl-12 pr-4 py-3 bg-gray-50 border-0 rounded-lg text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-mosque focus:bg-white transition-all shadow-sm" 
-                placeholder="City, neighborhood, or address" 
+                placeholder={t.filters.locationPlaceholder} 
                 type="text" 
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -132,14 +134,14 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
           <section>
             <div className="flex justify-between items-end mb-4">
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Price Range
+                {t.filters.priceRange}
               </label>
             </div>
             
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-gray-50 p-3 rounded-lg border border-transparent focus-within:border-mosque/30 transition-colors">
                 <label className="block text-[10px] text-gray-500 uppercase font-medium mb-1">
-                  Min Price
+                  {t.filters.minPrice}
                 </label>
                 <div className="flex items-center">
                   <span className="text-gray-400 mr-1">$</span>
@@ -154,7 +156,7 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
               </div>
               <div className="bg-gray-50 p-3 rounded-lg border border-transparent focus-within:border-mosque/30 transition-colors">
                 <label className="block text-[10px] text-gray-500 uppercase font-medium mb-1">
-                  Max Price
+                  {t.filters.maxPrice}
                 </label>
                 <div className="flex items-center">
                   <span className="text-gray-400 mr-1">$</span>
@@ -175,19 +177,19 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
             {/* Property Type */}
             <div className="space-y-3">
               <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Property Type
+                {t.filters.propertyType}
               </label>
               <div className="relative">
                 <select 
-                  className="w-full bg-gray-50 border-0 rounded-lg py-3 pl-4 pr-10 text-gray-900 appearance-none focus:ring-2 focus:ring-mosque cursor-pointer"
+                   className="w-full bg-gray-50 border-0 rounded-lg py-3 pl-4 pr-10 text-gray-900 appearance-none focus:ring-2 focus:ring-mosque cursor-pointer"
                   value={type}
                   onChange={(e) => setType(e.target.value)}
                 >
-                  <option>Any Type</option>
-                  <option>House</option>
-                  <option>Apartment</option>
-                  <option>Villa</option>
-                  <option>Penthouse</option>
+                  <option value={t.filters.anyType}>{t.filters.anyType}</option>
+                  <option value="House">{t.search.filterChips.house}</option>
+                  <option value="Apartment">{t.search.filterChips.apartment}</option>
+                  <option value="Villa">{t.search.filterChips.villa}</option>
+                  <option value="Penthouse">{t.search.filterChips.penthouse}</option>
                 </select>
                 <span className="material-icons absolute right-3 top-3 text-gray-400 pointer-events-none">
                   expand_more
@@ -199,7 +201,7 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
             <div className="space-y-4">
               {/* Beds */}
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-900">Bedrooms</span>
+                <span className="text-sm font-medium text-gray-900">{t.filters.bedrooms}</span>
                 <div className="flex items-center space-x-3 bg-gray-50 rounded-full p-1">
                   <button 
                     onClick={() => setBeds(Math.max(0, beds - 1))}
@@ -207,7 +209,7 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
                   >
                     <span className="material-icons text-base">remove</span>
                   </button>
-                  <span className="text-sm font-semibold w-6 text-center">{beds > 0 ? `${beds}+` : 'Any'}</span>
+                  <span className="text-sm font-semibold w-6 text-center">{beds > 0 ? `${beds}+` : t.filters.any}</span>
                   <button 
                     onClick={() => setBeds(beds + 1)}
                     className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-mosque hover:bg-mosque hover:text-white transition-colors"
@@ -218,7 +220,7 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
               </div>
               {/* Baths */}
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-900">Bathrooms</span>
+                <span className="text-sm font-medium text-gray-900">{t.filters.bathrooms}</span>
                 <div className="flex items-center space-x-3 bg-gray-50 rounded-full p-1">
                   <button 
                     onClick={() => setBaths(Math.max(0, baths - 1))}
@@ -226,7 +228,7 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
                   >
                     <span className="material-icons text-base">remove</span>
                   </button>
-                  <span className="text-sm font-semibold w-6 text-center">{baths > 0 ? `${baths}+` : 'Any'}</span>
+                  <span className="text-sm font-semibold w-6 text-center">{baths > 0 ? `${baths}+` : t.filters.any}</span>
                   <button 
                     onClick={() => setBaths(baths + 1)}
                     className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-mosque hover:bg-mosque hover:text-white transition-colors"
@@ -241,16 +243,16 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
           {/* Section 4: Amenities */}
           <section>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
-              Amenities &amp; Features
+              {t.filters.amenities}
             </label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {[
-                { id: "pool", label: "Swimming Pool", icon: "pool" },
-                { id: "gym", label: "Gym", icon: "fitness_center" },
-                { id: "parking", label: "Parking", icon: "local_parking" },
-                { id: "ac", label: "Air Conditioning", icon: "ac_unit" },
-                { id: "wifi", label: "High-speed Wifi", icon: "wifi" },
-                { id: "patio", label: "Patio / Terrace", icon: "deck" }
+                { id: "pool", label: t.filters.amenityList.pool, icon: "pool" },
+                { id: "gym", label: t.filters.amenityList.gym, icon: "fitness_center" },
+                { id: "parking", label: t.filters.amenityList.parking, icon: "local_parking" },
+                { id: "ac", label: t.filters.amenityList.ac, icon: "ac_unit" },
+                { id: "wifi", label: t.filters.amenityList.wifi, icon: "wifi" },
+                { id: "patio", label: t.filters.amenityList.patio, icon: "deck" }
               ].map(amenity => {
                 const isActive = amenities.includes(amenity.id);
                 return (
@@ -279,13 +281,13 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
             onClick={handleClear}
             className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors underline decoration-gray-300 underline-offset-4"
           >
-            Clear all filters
+            {t.filters.clearAll}
           </button>
           <button 
             onClick={handleApply}
             className="bg-mosque hover:bg-mosque/90 text-white px-8 py-3 rounded-lg font-medium shadow-lg shadow-mosque/30 transition-all hover:shadow-mosque/40 flex items-center gap-2 transform active:scale-95"
           >
-            Show Homes
+            {t.filters.showHomes}
             <span className="material-icons text-sm">arrow_forward</span>
           </button>
         </footer>
@@ -293,3 +295,4 @@ export default function SearchFiltersModal({ isOpen, onClose }: SearchFiltersMod
     </div>
   );
 }
+

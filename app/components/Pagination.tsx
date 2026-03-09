@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "../i18n";
 
 interface PaginationProps {
   currentPage: number;
@@ -10,6 +11,7 @@ interface PaginationProps {
 }
 
 export default function Pagination({ currentPage, totalPages, totalCount }: PaginationProps) {
+  const { t } = useTranslations();
   const pathname = usePathname();
 
   if (totalPages <= 1) return null;
@@ -30,9 +32,9 @@ export default function Pagination({ currentPage, totalPages, totalCount }: Pagi
   return (
     <div className="mt-12 flex flex-col items-center gap-4">
       <p className="text-sm text-nordic-muted">
-        Showing page <span className="font-semibold text-nordic-dark">{currentPage}</span> of{" "}
+        {t.pagination.showing} <span className="font-semibold text-nordic-dark">{currentPage}</span> {t.pagination.of}{" "}
         <span className="font-semibold text-nordic-dark">{totalPages}</span> &mdash;{" "}
-        <span className="font-semibold text-nordic-dark">{totalCount}</span> properties
+        <span className="font-semibold text-nordic-dark">{totalCount}</span> {t.pagination.properties}
       </p>
       <div className="flex items-center gap-2">
         {/* Previous */}
@@ -42,12 +44,12 @@ export default function Pagination({ currentPage, totalPages, totalCount }: Pagi
             className="flex items-center gap-1 px-4 py-2 bg-white border border-nordic-dark/10 hover:border-mosque hover:text-mosque text-nordic-dark font-medium rounded-lg transition-all hover:shadow-md text-sm"
           >
             <span className="material-icons text-base">chevron_left</span>
-            Prev
+            {t.pagination.prev}
           </Link>
         ) : (
           <span className="flex items-center gap-1 px-4 py-2 bg-white border border-nordic-dark/5 text-nordic-muted/40 font-medium rounded-lg text-sm cursor-not-allowed">
             <span className="material-icons text-base">chevron_left</span>
-            Prev
+            {t.pagination.prev}
           </span>
         )}
 
@@ -106,12 +108,12 @@ export default function Pagination({ currentPage, totalPages, totalCount }: Pagi
             href={`${pathname}?page=${nextPage}`}
             className="flex items-center gap-1 px-4 py-2 bg-white border border-nordic-dark/10 hover:border-mosque hover:text-mosque text-nordic-dark font-medium rounded-lg transition-all hover:shadow-md text-sm"
           >
-            Next
+            {t.pagination.next}
             <span className="material-icons text-base">chevron_right</span>
           </Link>
         ) : (
           <span className="flex items-center gap-1 px-4 py-2 bg-white border border-nordic-dark/5 text-nordic-muted/40 font-medium rounded-lg text-sm cursor-not-allowed">
-            Next
+            {t.pagination.next}
             <span className="material-icons text-base">chevron_right</span>
           </span>
         )}
@@ -119,3 +121,4 @@ export default function Pagination({ currentPage, totalPages, totalCount }: Pagi
     </div>
   );
 }
+

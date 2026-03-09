@@ -4,8 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { DbProperty } from "../lib/supabase";
 import { buildPropertyUrl } from "../lib/slug";
+import { useTranslations } from "../i18n";
 
 export default function PropertyCard({ property, hiddenClasses = "" }: { property: DbProperty, hiddenClasses?: string }) {
+  const { t } = useTranslations();
   const href = buildPropertyUrl(property);
 
   return (
@@ -34,7 +36,7 @@ export default function PropertyCard({ property, hiddenClasses = "" }: { propert
         <div className="flex justify-between items-baseline mb-2">
           <h3 className="font-bold text-lg text-nordic-dark">
             {property.price}
-            {property.is_rental && <span className="text-sm font-normal text-nordic-muted">/mo</span>}
+            {property.is_rental && <span className="text-sm font-normal text-nordic-muted">{t.property.perMonth}</span>}
           </h3>
         </div>
         <h4 className="text-nordic-dark font-medium truncate mb-1">{property.title}</h4>

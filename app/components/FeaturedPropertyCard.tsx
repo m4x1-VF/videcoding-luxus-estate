@@ -4,8 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { DbProperty } from "../lib/supabase";
 import { buildPropertyUrl } from "../lib/slug";
+import { useTranslations } from "../i18n";
 
 export default function FeaturedPropertyCard({ property }: { property: DbProperty }) {
+  const { t } = useTranslations();
   const href = buildPropertyUrl(property);
 
   return (
@@ -43,10 +45,10 @@ export default function FeaturedPropertyCard({ property }: { property: DbPropert
         </div>
         <div className="flex items-center gap-6 mt-6 pt-6 border-t border-nordic-dark/5">
           <div className="flex items-center gap-2 text-nordic-muted text-sm">
-            <span className="material-icons text-lg">king_bed</span> {property.beds} Beds
+            <span className="material-icons text-lg">king_bed</span> {property.beds} {t.property.beds}
           </div>
           <div className="flex items-center gap-2 text-nordic-muted text-sm">
-            <span className="material-icons text-lg">bathtub</span> {property.baths} Baths
+            <span className="material-icons text-lg">bathtub</span> {property.baths} {t.property.baths}
           </div>
           <div className="flex items-center gap-2 text-nordic-muted text-sm">
             <span className="material-icons text-lg">square_foot</span> {property.area}
