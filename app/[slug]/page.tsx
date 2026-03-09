@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: PropertyPageProps) {
     openGraph: {
       title: `${property.title} - Luxe Estate`,
       description: `View details for the stunning property located in ${property.location}.`,
-      images: [{ url: property.image_url }],
+      images: [{ url: property.images?.[0] ?? property.image_url }],
     },
   };
 }
@@ -38,13 +38,10 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
     notFound();
   }
 
-  // Fallback to image_url if images is null or empty
-  const images = property.images && property.images.length > 0 
-    ? property.images 
-    : [property.image_url];
-  
-  // Use the first image as main, we'll keep it simple for this version without client-side state for the main picture,
-  // or use a client component if we need full gallery interactions. For now, matching the design.
+  const images =
+    property.images && property.images.length > 0
+      ? property.images
+      : [property.image_url];
   const mainImage = images[0];
 
   return (
@@ -80,16 +77,22 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
             
             {/* Gallery Thumbnails */}
             {images.length > 1 && (
-              <div className="flex gap-4 overflow-x-auto hide-scroll pb-2 snap-x">
+              <div className="flex gap-4 overflow-x-auto hide-scroll snap-x py-4 px-4 items-center">
                 {images.map((img, index) => (
-                  <div key={index} className="flex-none w-48 aspect-[4/3] relative rounded-lg overflow-hidden cursor-pointer ring-2 ring-mosque ring-offset-2 ring-offset-clear-day snap-start opacity-70 hover:opacity-100 transition-opacity">
-                    <Image 
-                      src={img}
-                      alt={`${property.title} photo ${index + 1}`}
-                      className="object-cover"
-                      fill
-                      sizes="192px"
-                    />
+                  <div key={index} className="flex-none snap-start">
+                    <div className="p-[2px] rounded-[10px] bg-mosque">
+                      <div className="border-[2px] border-white rounded-[8px]">
+                        <div className="w-48 aspect-[4/3] relative rounded-[6px] overflow-hidden opacity-70 hover:opacity-100 transition-opacity cursor-pointer">
+                          <Image 
+                            src={img}
+                            alt={`${property.title} photo ${index + 1}`}
+                            className="object-cover"
+                            fill
+                            sizes="192px"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>

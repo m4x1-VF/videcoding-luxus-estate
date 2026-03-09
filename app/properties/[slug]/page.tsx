@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PropertyPageProps) {
     openGraph: {
       title: `${property.title} - Luxe Estate`,
       description: `View details for the stunning property located in ${property.location}.`,
-      images: [{ url: property.image_url }],
+      images: [{ url: property.images?.[0] ?? property.image_url }],
     },
   };
 }
@@ -40,12 +40,10 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
     notFound();
   }
 
-  // Fallback to image_url if images is null or empty
   const images =
     property.images && property.images.length > 0
       ? property.images
       : [property.image_url];
-
   const mainImage = images[0];
 
   return (

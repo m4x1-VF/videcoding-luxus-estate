@@ -14,7 +14,7 @@ export default function PropertyCard({ property, hiddenClasses = "" }: { propert
         <Image 
           alt={property.title} 
           className="object-cover transition-transform duration-500 group-hover:scale-110" 
-          src={property.image_url}
+          src={property.images?.[0] ?? property.image_url}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />

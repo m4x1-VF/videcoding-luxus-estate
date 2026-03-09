@@ -45,24 +45,34 @@ export default function PropertyGallery({ images, title, isFeatured, status }: P
 
       {/* Gallery Thumbnails */}
       {images.length > 1 && (
-        <div className="flex gap-4 overflow-x-auto hide-scroll py-2 px-2 snap-x">
+        <div className="flex gap-4 overflow-x-auto hide-scroll snap-x py-4 px-4 items-center">
           {images.map((img, index) => (
             <div
               key={index}
               onClick={() => setSelectedImage(img)}
-              className={`flex-none w-48 aspect-[4/3] relative rounded-lg overflow-hidden cursor-pointer snap-start transition-all duration-300 ${
-                selectedImage === img
-                  ? "ring-2 ring-mosque ring-offset-2 opacity-100"
-                  : "opacity-60 hover:opacity-100 hover:ring-2 hover:ring-mosque/50 hover:ring-offset-2"
-              }`}
+              className="flex-none snap-start"
             >
-              <Image
-                src={img}
-                alt={`${title} photo ${index + 1}`}
-                className="object-cover"
-                fill
-                sizes="192px"
-              />
+              {/* Outer wrapper creates the colored "ring" using padding and background */}
+              <div 
+                className={`p-[2px] rounded-[10px] transition-all duration-300 ${
+                  selectedImage === img
+                    ? "bg-mosque"
+                    : "bg-transparent hover:bg-mosque/30"
+                }`}
+              >
+                {/* Inner wrapper creates the "ring-offset" using a white border */}
+                <div className="border-[2px] border-white rounded-[8px]">
+                  <div className={`w-48 aspect-[4/3] relative rounded-[6px] overflow-hidden transition-opacity duration-300 ${selectedImage === img ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}>
+                    <Image
+                      src={img}
+                      alt={`${title} photo ${index + 1}`}
+                      className="object-cover"
+                      fill
+                      sizes="192px"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>

@@ -14,7 +14,7 @@ export default function FeaturedPropertyCard({ property }: { property: DbPropert
         <Image 
           alt={property.title} 
           className="object-cover transition-transform duration-700 group-hover:scale-105" 
-          src={property.image_url}
+          src={property.images?.[0] ?? property.image_url}
           fill
           sizes="(max-width: 1024px) 100vw, 50vw"
         />
