@@ -5,6 +5,16 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { createClient } from "../lib/supabase/client";
 import { DbProperty } from "../lib/supabase";
+import dynamic from "next/dynamic";
+
+const AdminPropertyMap = dynamic(() => import("./AdminPropertyMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full bg-gray-100 animate-pulse flex items-center justify-center">
+      <span className="material-icons text-gray-400 text-3xl">map</span>
+    </div>
+  ),
+});
 
 export default function AdminPropertyForm({
   initialData,
@@ -526,23 +536,30 @@ export default function AdminPropertyForm({
               </div>
             </div>
 
-            {/* Visual map preview only */}
+            {/* Map preview */}
             <div className="relative h-48 w-full rounded-lg overflow-hidden bg-gray-100 border border-gray-200 group">
-              <Image
-                fill
-                sizes="(max-width: 640px) 100vw, 33vw"
-                alt="Map view of city streets"
-                className="object-cover opacity-80 group-hover:opacity-100 transition-all duration-500"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAS55FY7gfArnlTpNsdabJk9nBO5uQJgOwIsl8beO34JRZ9dMmjLoIkTuTUO72Y9L5tUmQqTReQWebUWadAWwLusGmRQiIict5sqY--yRaOxuYpTzfR4vv4RKh1ex6oxY64e0kbSeMudNO6pv-gG0WzVWs-pDfvQm5IoTQ1mT-tAV49LDkXAHZl317M1-D7eZw3N8o2ExKWTgg6oMAXOFVnkApIqnb7TZHekwSw8pWQxpJV2EKI8EQKQbQXJaSbjN8gB1n8b-ueWj8"
-              />
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="bg-white/90 text-nordic-dark px-3 py-1.5 rounded shadow-sm backdrop-blur-sm text-xs font-bold flex items-center gap-1">
-                  <span className="material-icons text-sm text-mosque">
-                    map
-                  </span>{" "}
-                  Preview
-                </span>
-              </div>
+              {latitude && !isNaN(parseFloat(latitude)) && parseFloat(latitude) >= -90 && parseFloat(latitude) <= 90 &&
+               longitude && !isNaN(parseFloat(longitude)) && parseFloat(longitude) >= -180 && parseFloat(longitude) <= 180 ? (
+                <AdminPropertyMap latitude={parseFloat(latitude)} longitude={parseFloat(longitude)} />
+              ) : (
+                <>
+                  <Image
+                    fill
+                    sizes="(max-width: 640px) 100vw, 33vw"
+                    alt="Map view of city streets"
+                    className="object-cover opacity-80 group-hover:opacity-100 transition-all duration-500"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAS55FY7gfArnlTpNsdabJk9nBO5uQJgOwIsl8beO34JRZ9dMmjLoIkTuTUO72Y9L5tUmQqTReQWebUWadAWwLusGmRQiIict5sqY--yRaOxuYpTzfR4vv4RKh1ex6oxY64e0kbSeMudNO6pv-gG0WzVWs-pDfvQm5IoTQ1mT-tAV49LDkXAHZl317M1-D7eZw3N8o2ExKWTgg6oMAXOFVnkApIqnb7TZHekwSw8pWQxpJV2EKI8EQKQbQXJaSbjN8gB1n8b-ueWj8"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <span className="bg-white/90 text-nordic-dark px-3 py-1.5 rounded shadow-sm backdrop-blur-sm text-xs font-bold flex items-center gap-1">
+                      <span className="material-icons text-sm text-mosque">
+                        map
+                      </span>{" "}
+                      Preview
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
