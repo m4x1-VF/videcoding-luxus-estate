@@ -1,8 +1,13 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import Image from 'next/image'
+import Link from 'next/link'
 
-export default async function AdminPropertiesPage() {
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}
+
+export default async function AdminPropertiesPage({ searchParams }: PageProps) {
   const cookieStore = await cookies()
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -27,6 +32,12 @@ export default async function AdminPropertiesPage() {
   const active = properties?.filter(p => !p.status?.toLowerCase().includes('sold'))?.length || 0;
   const pending = properties?.filter(p => p.status?.toLowerCase().includes('pending') || p.status?.toLowerCase().includes('reserved'))?.length || 0;
 
+  const params = await searchParams;
+  const currentPage = Math.max(1, parseInt(params.page || "1", 10));
+  const limit = 10;
+  const paginatedProperties = properties?.slice((currentPage - 1) * limit, currentPage * limit) || [];
+  const totalPages = Math.ceil(total / limit);
+
   return (
     <div className="flex-grow w-full py-10 px-4 sm:px-6 lg:px-8 bg-background-light font-display min-h-[calc(100vh-200px)]">
       {/* Header Section */}
@@ -39,7 +50,7 @@ export default async function AdminPropertiesPage() {
           <button className="bg-white border border-gray-200 text-nordic hover:bg-gray-50 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm inline-flex items-center gap-2">
             <span className="material-icons text-base">filter_list</span> Filter
           </button>
-          <button className="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-lg text-sm font-medium shadow-md shadow-primary/20 transition-all transform hover:-translate-y-0.5 inline-flex items-center gap-2">
+          <button className="bg-mosque hover:bg-mosque/90 text-white px-5 py-2.5 rounded-lg text-sm font-medium shadow-md shadow-mosque/20 transition-all transform hover:-translate-y-0.5 inline-flex items-center gap-2">
             <span className="material-icons text-base">add</span> Add New Property
           </button>
         </div>
@@ -47,25 +58,25 @@ export default async function AdminPropertiesPage() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-5 rounded-xl border border-primary/10 shadow-sm flex items-center justify-between">
+        <div className="bg-white p-5 rounded-xl border border-mosque/10 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-500">Total Listings</p>
             <p className="text-2xl font-bold text-nordic mt-1">{total}</p>
           </div>
-          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+          <div className="h-10 w-10 rounded-full bg-mosque/10 flex items-center justify-center text-mosque">
             <span className="material-icons">apartment</span>
           </div>
         </div>
-        <div className="bg-white p-5 rounded-xl border border-primary/10 shadow-sm flex items-center justify-between">
+        <div className="bg-white p-5 rounded-xl border border-mosque/10 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-500">Active Properties</p>
             <p className="text-2xl font-bold text-nordic mt-1">{active}</p>
           </div>
-          <div className="h-10 w-10 rounded-full bg-[#D9ECC8] flex items-center justify-center text-primary">
+          <div className="h-10 w-10 rounded-full bg-mosque/10 flex items-center justify-center text-mosque">
             <span className="material-icons">check_circle</span>
           </div>
         </div>
-        <div className="bg-white p-5 rounded-xl border border-primary/10 shadow-sm flex items-center justify-between">
+        <div className="bg-white p-5 rounded-xl border border-mosque/10 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-500">Pending Sale</p>
             <p className="text-2xl font-bold text-nordic mt-1">{pending}</p>
@@ -86,15 +97,15 @@ export default async function AdminPropertiesPage() {
           <div className="col-span-2 text-right">Actions</div>
         </div>
 
-        {properties?.map((prop) => {
+        {paginatedProperties?.map((prop) => {
           const isSold = prop.status?.toLowerCase().includes('sold');
           const isPending = prop.status?.toLowerCase().includes('reserved') || prop.status?.toLowerCase().includes('pending');
           const badgeClass = isSold 
             ? "bg-gray-100  text-gray-600  border border-gray-200 "
             : isPending 
             ? "bg-orange-100  text-orange-700  border border-orange-200 "
-            : "bg-[#D9ECC8] text-primary border border-primary/10";
-          const dotClass = isSold ? "bg-gray-500" : isPending ? "bg-orange-500" : "bg-primary";
+            : "bg-mosque/10 text-mosque border border-mosque/10";
+          const dotClass = isSold ? "bg-gray-500" : isPending ? "bg-orange-500" : "bg-mosque";
 
           return (
             <div key={prop.id} className="group grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-5 border-b border-gray-100 hover:bg-background-light transition-colors items-center">
@@ -110,7 +121,7 @@ export default async function AdminPropertiesPage() {
                   )}
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-nordic group-hover:text-primary transition-colors cursor-pointer">{prop.title}</h3>
+                  <h3 className="text-lg font-bold text-nordic group-hover:text-mosque transition-colors cursor-pointer">{prop.title}</h3>
                   <p className="text-sm text-gray-500">{prop.location}</p>
                   <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
                     <span className="flex items-center gap-1"><span className="material-icons text-[14px]">bed</span> {prop.bedrooms || 0} Beds</span>
@@ -138,7 +149,7 @@ export default async function AdminPropertiesPage() {
               
               {/* Actions */}
               <div className="col-span-12 md:col-span-2 flex items-center justify-end gap-2">
-                <button className="p-2 rounded-lg text-gray-400 hover:text-primary hover:bg-[#D9ECC8]/30 transition-all tooltip-trigger" title="Edit Property">
+                <button className="p-2 rounded-lg text-gray-400 hover:text-mosque hover:bg-mosque/20 transition-all tooltip-trigger" title="Edit Property">
                   <span className="material-icons text-xl">edit</span>
                 </button>
                 <button className="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all tooltip-trigger" title="Delete Property">
@@ -156,14 +167,14 @@ export default async function AdminPropertiesPage() {
         )}
 
         {/* Pagination placeholder as per design */}
-        {properties && properties.length > 0 && (
+        {total > 0 && (
           <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50">
             <div className="text-sm text-gray-500">
-                Showing <span className="font-medium text-nordic">1</span> to <span className="font-medium text-nordic">{properties.length}</span> of <span className="font-medium text-nordic">{properties.length}</span> results
+                Showing <span className="font-medium text-nordic">{Math.min((currentPage - 1) * limit + 1, total)}</span> to <span className="font-medium text-nordic">{Math.min(currentPage * limit, total)}</span> of <span className="font-medium text-nordic">{total}</span> results
             </div>
             <div className="flex gap-2">
-              <button className="px-3 py-1 text-sm border border-gray-200 rounded-md text-gray-600 hover:bg-white disabled:opacity-50" disabled>Previous</button>
-              <button className="px-3 py-1 text-sm border border-gray-200 rounded-md text-gray-600 hover:bg-white" disabled>Next</button>
+              <Link href={`/admin/properties?page=${currentPage - 1}`} className={`px-4 py-1.5 text-sm border font-medium border-mosque text-mosque hover:bg-mosque hover:text-white transition-colors rounded-md ${currentPage <= 1 ? 'opacity-50 pointer-events-none' : ''}`}>Previous</Link>
+              <Link href={`/admin/properties?page=${currentPage + 1}`} className={`px-4 py-1.5 text-sm border font-medium border-mosque text-mosque hover:bg-mosque hover:text-white transition-colors rounded-md ${currentPage >= totalPages ? 'opacity-50 pointer-events-none' : ''}`}>Next</Link>
             </div>
           </div>
         )}

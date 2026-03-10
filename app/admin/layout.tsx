@@ -1,9 +1,12 @@
 import Link from 'next/link';
 import { ReactNode } from 'react';
+import AdminNavbar from '../components/AdminNavbar';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8">
+    <div className="min-h-screen bg-background-light flex flex-col">
+      <AdminNavbar />
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8 flex-1">
       <aside className="w-full md:w-64 flex-shrink-0">
         <div className="bg-white rounded-2xl shadow-sm border border-nordic-dark/10 p-4 sticky top-28">
           <h2 className="text-lg font-semibold text-nordic-dark mb-4 px-2">Admin Dashboard</h2>
@@ -22,6 +25,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <main className="flex-1 bg-white rounded-2xl shadow-sm border border-nordic-dark/10 overflow-hidden">
         {children}
       </main>
+      </div>
     </div>
   );
 }

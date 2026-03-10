@@ -2,8 +2,13 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import RoleSelect from './RoleSelect'
 import Image from 'next/image'
+import Link from 'next/link'
 
-export default async function AdminUsersPage() {
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}
+
+export default async function AdminUsersPage({ searchParams }: PageProps) {
   const cookieStore = await cookies()
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,6 +21,13 @@ export default async function AdminUsersPage() {
   )
 
   const { data: users, error } = await supabase.rpc('get_all_users_admin')
+
+  const total = users?.length || 0;
+  const params = await searchParams;
+  const currentPage = Math.max(1, parseInt(params.page || "1", 10));
+  const limit = 10;
+  const paginatedUsers = users?.slice((currentPage - 1) * limit, currentPage * limit) || [];
+  const totalPages = Math.ceil(total / limit);
 
   if (error) {
     return <div className="p-8 text-red-500 bg-red-50 rounded-xl my-4 mx-8">Error loading users: {error.message}</div>
@@ -32,11 +44,11 @@ export default async function AdminUsersPage() {
           <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
             <div className="relative group w-full md:w-80">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="material-icons text-nordic/40 group-focus-within:text-primary text-xl">search</span>
+                <span className="material-icons text-nordic/40 group-focus-within:text-mosque text-xl">search</span>
               </div>
-              <input className="block w-full pl-10 pr-3 py-2.5 border-none rounded-lg bg-white text-nordic shadow-soft placeholder-nordic/30 focus:ring-2 focus:ring-primary focus:bg-white transition-all text-sm" placeholder="Search by name, email..." type="text"/>
+              <input className="block w-full pl-10 pr-3 py-2.5 border-none rounded-lg bg-white text-nordic shadow-soft placeholder-nordic/30 focus:ring-2 focus:ring-mosque focus:bg-white transition-all text-sm" placeholder="Search by name, email..." type="text"/>
             </div>
-            <button className="inline-flex items-center justify-center px-4 py-2.5 border border-primary text-sm font-medium rounded-lg text-primary bg-transparent hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors whitespace-nowrap">
+            <button className="inline-flex items-center justify-center px-4 py-2.5 border border-mosque text-sm font-medium rounded-lg text-white bg-mosque hover:bg-mosque/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-mosque transition-colors whitespace-nowrap">
                 <span className="material-icons text-lg mr-2">add</span>
                 Add User
             </button>
@@ -44,7 +56,7 @@ export default async function AdminUsersPage() {
         </div>
         
         <div className="mt-8 flex gap-6 border-b border-nordic/10 overflow-x-auto">
-          <button className="pb-3 text-sm font-semibold text-primary border-b-2 border-primary">All Users</button>
+          <button className="pb-3 text-sm font-semibold text-mosque border-b-2 border-mosque">All Users</button>
           <button className="pb-3 text-sm font-medium text-nordic/60 hover:text-nordic transition-colors">Agents</button>
           <button className="pb-3 text-sm font-medium text-nordic/60 hover:text-nordic transition-colors">Brokers</button>
           <button className="pb-3 text-sm font-medium text-nordic/60 hover:text-nordic transition-colors">Admins</button>
@@ -59,13 +71,13 @@ export default async function AdminUsersPage() {
           <div className="col-span-2 text-right">Actions</div>
         </div>
 
-        {users?.map((u: any) => {
+        {paginatedUsers?.map((u: any) => {
           let badgeClass = "bg-gray-100 text-gray-600  ";
           if (u.role === 'admin') badgeClass = "bg-nordic text-white";
-          else if (u.role === 'agent') badgeClass = "bg-primary/10 text-primary";
+          else if (u.role === 'agent') badgeClass = "bg-mosque/10 text-mosque";
 
           return (
-            <div key={u.id} className="user-card group relative bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:bg-[#D9ECC8] flex flex-col md:grid md:grid-cols-12 gap-4 items-center z-10">
+            <div key={u.id} className="user-card group relative bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:bg-mosque/5 flex flex-col md:grid md:grid-cols-12 gap-4 items-center z-10">
               <div className="col-span-12 md:col-span-4 flex items-center w-full">
                 <div className="relative flex-shrink-0 mt-1">
                   <div className="h-12 w-12 rounded-full overflow-hidden bg-nordic/10 flex items-center justify-center">
@@ -89,7 +101,7 @@ export default async function AdminUsersPage() {
                     {u.role ? u.role.charAt(0).toUpperCase() + u.role.slice(1) : 'User'}
                 </span>
                 <div className="flex items-center text-xs text-nordic/60">
-                  <span className="material-icons text-[14px] mr-1 text-primary">check_circle</span>
+                  <span className="material-icons text-[14px] mr-1 text-mosque">check_circle</span>
                   Active
                 </div>
               </div>
@@ -126,22 +138,22 @@ export default async function AdminUsersPage() {
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-nordic/60">
-                 Showing <span className="font-medium text-nordic">1</span> to <span className="font-medium text-nordic">{users?.length || 0}</span> of <span className="font-medium text-nordic">{users?.length || 0}</span> users
+                 Showing <span className="font-medium text-nordic">{Math.min((currentPage - 1) * limit + 1, total)}</span> to <span className="font-medium text-nordic">{Math.min(currentPage * limit, total)}</span> of <span className="font-medium text-nordic">{total}</span> users
               </p>
             </div>
             <div>
               <nav aria-label="Pagination" className="relative z-0 inline-flex rounded-md shadow-none -space-x-px">
-                <a className="relative inline-flex items-center px-2 py-2 rounded-l-md text-sm font-medium text-nordic/50 hover:text-primary transition-colors" href="#">
+                <Link href={`/admin/users?page=${currentPage - 1}`} className={`relative inline-flex items-center px-2 py-2 rounded-l-md text-sm font-medium text-nordic/50 hover:text-mosque transition-colors ${currentPage <= 1 ? 'opacity-50 pointer-events-none' : ''}`}>
                   <span className="sr-only">Previous</span>
                   <span className="material-icons text-xl">chevron_left</span>
-                </a>
-                <a aria-current="page" className="z-10 bg-primary text-white relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md mx-1 shadow-sm" href="#">
-                  1
-                </a>
-                <a className="relative inline-flex items-center px-2 py-2 rounded-r-md text-sm font-medium text-nordic/50 hover:text-primary transition-colors" href="#">
+                </Link>
+                <div aria-current="page" className="z-10 bg-mosque text-white relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md mx-1 shadow-sm">
+                  {currentPage}
+                </div>
+                <Link href={`/admin/users?page=${currentPage + 1}`} className={`relative inline-flex items-center px-2 py-2 rounded-r-md text-sm font-medium text-nordic/50 hover:text-mosque transition-colors ${currentPage >= totalPages ? 'opacity-50 pointer-events-none' : ''}`}>
                   <span className="sr-only">Next</span>
                   <span className="material-icons text-xl">chevron_right</span>
-                </a>
+                </Link>
               </nav>
             </div>
           </div>
