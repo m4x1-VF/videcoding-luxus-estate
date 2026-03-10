@@ -2,11 +2,34 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { createClient } from "../lib/supabase/client";
 import { useTranslations } from "../i18n";
 import LanguageSelector from "./LanguageSelector";
+import { User } from "@supabase/supabase-js";
 
 export default function Navbar() {
   const { t } = useTranslations();
+  const [user, setUser] = useState<User | null>(null);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    fetchUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase.auth]);
 
   return (
     <nav className="sticky top-0 z-50 bg-background-light/95 backdrop-blur-md border-b border-nordic-dark/10">
@@ -35,17 +58,23 @@ export default function Navbar() {
                 <span className="material-icons">notifications_none</span>
                 <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-background-light"></span>
               </button>
-              <button className="flex items-center gap-2 pl-2 border-l border-nordic-dark/10 ml-2">
-                <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden ring-2 ring-transparent hover:ring-mosque transition-all relative">
-                  <Image 
-                    alt="Profile" 
-                    className="object-cover" 
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAWhQZ663Bd08kmzjbOPmUk4UIxYooNONShMEFXLR-DtmVi6Oz-TiaY77SPwFk7g0OobkeZEOMvt6v29mSOD0Xm2g95WbBG3ZjWXmiABOUwGU0LOySRfVDo-JTXQ0-gtwjWxbmue0qDm91m-zEOEZwAW6iRFB1qC1bAU-wkjxm67Sbztq8w7srHkFT9bVEC86qG-FzhOBTomhAurNRmx9l8Yfqabk328NfdKuVLckgCdaPsNFE3yN65MeoRi05GA_gXIMwG4YDIeA"
-                    fill
-                    sizes="36px"
-                  />
-                </div>
-              </button>
+              <Link href="/login" className="flex items-center gap-2 pl-2 border-l border-nordic-dark/10 ml-2">
+                {user ? (
+                  <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden ring-2 ring-transparent hover:ring-mosque transition-all relative">
+                    <Image 
+                      alt="Profile" 
+                      className="object-cover" 
+                      src={user.user_metadata?.avatar_url || "https://lh3.googleusercontent.com/aida-public/AB6AXuCAWhQZ663Bd08kmzjbOPmUk4UIxYooNONShMEFXLR-DtmVi6Oz-TiaY77SPwFk7g0OobkeZEOMvt6v29mSOD0Xm2g95WbBG3ZjWXmiABOUwGU0LOySRfVDo-JTXQ0-gtwjWxbmue0qDm91m-zEOEZwAW6iRFB1qC1bAU-wkjxm67Sbztq8w7srHkFT9bVEC86qG-FzhOBTomhAurNRmx9l8Yfqabk328NfdKuVLckgCdaPsNFE3yN65MeoRi05GA_gXIMwG4YDIeA"}
+                      fill
+                      sizes="36px"
+                    />
+                  </div>
+                ) : (
+                  <div className="px-3 py-1.5 text-sm font-medium text-mosque border border-mosque rounded-lg hover:bg-mosque hover:text-white transition-colors cursor-pointer">
+                    Sign in
+                  </div>
+                )}
+              </Link>
             </div>
           </div>
         </div>
