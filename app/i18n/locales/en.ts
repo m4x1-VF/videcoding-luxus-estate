@@ -5,6 +5,8 @@ const en = {
     rent: "Rent",
     sell: "Sell",
     savedHomes: "Saved Homes",
+    signIn: "Sign in",
+    signOut: "Sign out",
   },
 
   // Home page sections

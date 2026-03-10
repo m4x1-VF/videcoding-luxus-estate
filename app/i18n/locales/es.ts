@@ -7,6 +7,8 @@ const es: Translations = {
     rent: "Rentar",
     sell: "Vender",
     savedHomes: "Casas Guardadas",
+    signIn: "Iniciar sesión",
+    signOut: "Cerrar sesión",
   },
 
   // Home page sections
