@@ -1,0 +1,2 @@
+-- HACE A TODOS LOS USUARIOS EXISTENTES ADMINISTRADORES
+UPDATE public.user_roles SET role = 'admin';

@@ -11,12 +11,19 @@ import { User } from "@supabase/supabase-js";
 export default function Navbar() {
   const { t } = useTranslations();
   const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
+      if (user) {
+        const { data } = await supabase.from('user_roles').select('role').eq('user_id', user.id).single();
+        setIsAdmin(data?.role === 'admin');
+      } else {
+        setIsAdmin(false);
+      }
     };
     fetchUser();
 
@@ -61,6 +68,14 @@ export default function Navbar() {
               <div className="flex items-center gap-2 pl-2 border-l border-nordic-dark/10 ml-2">
                 {user ? (
                   <>
+                    {isAdmin && (
+                      <Link href="/admin/properties">
+                        <div className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-mosque bg-mosque/10 rounded-xl hover:bg-mosque/20 transition-all duration-200 cursor-pointer mr-2 border border-mosque/20">
+                          <span className="material-icons text-[18px]">admin_panel_settings</span>
+                          Admin
+                        </div>
+                      </Link>
+                    )}
                     <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden ring-2 ring-transparent hover:ring-mosque transition-all relative">
                       <Image 
                         alt="Profile" 
