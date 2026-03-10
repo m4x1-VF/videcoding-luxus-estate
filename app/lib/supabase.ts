@@ -30,7 +30,7 @@ export async function getFeaturedProperties(): Promise<DbProperty[]> {
     .from("properties")
     .select("*")
     .eq("is_featured", true)
-    .order("created_at", { ascending: true })
+    .order("created_at", { ascending: false })
     .limit(4);
 
   if (error) {
@@ -64,7 +64,7 @@ export async function getPaginatedProperties(page: number, filters?: PropertyFil
     .from("properties")
     .select("*", { count: "exact" })
     .eq("is_featured", false)
-    .order("created_at", { ascending: true })
+    .order("created_at", { ascending: false })
     .range(from, to);
 
   if (filters?.query) {

@@ -50,9 +50,9 @@ export default async function AdminPropertiesPage({ searchParams }: PageProps) {
           <button className="bg-white border border-gray-200 text-nordic hover:bg-gray-50 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm inline-flex items-center gap-2">
             <span className="material-icons text-base">filter_list</span> Filter
           </button>
-          <button className="bg-mosque hover:bg-mosque/90 text-white px-5 py-2.5 rounded-lg text-sm font-medium shadow-md shadow-mosque/20 transition-all transform hover:-translate-y-0.5 inline-flex items-center gap-2">
+          <Link href="/admin/properties/new" className="bg-mosque hover:bg-mosque/90 text-white px-5 py-2.5 rounded-lg text-sm font-medium shadow-md shadow-mosque/20 transition-all transform hover:-translate-y-0.5 inline-flex items-center gap-2">
             <span className="material-icons text-base">add</span> Add New Property
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -124,11 +124,11 @@ export default async function AdminPropertiesPage({ searchParams }: PageProps) {
                   <h3 className="text-lg font-bold text-nordic group-hover:text-mosque transition-colors cursor-pointer">{prop.title}</h3>
                   <p className="text-sm text-gray-500">{prop.location}</p>
                   <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
-                    <span className="flex items-center gap-1"><span className="material-icons text-[14px]">bed</span> {prop.bedrooms || 0} Beds</span>
+                    <span className="flex items-center gap-1"><span className="material-icons text-[14px]">bed</span> {prop.beds || 0} Beds</span>
                     <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                    <span className="flex items-center gap-1"><span className="material-icons text-[14px]">bathtub</span> {prop.bathrooms || 0} Baths</span>
+                    <span className="flex items-center gap-1"><span className="material-icons text-[14px]">bathtub</span> {prop.baths || 0} Baths</span>
                     <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                    <span>{prop.area || 0} sqft</span>
+                    <span>{prop.area || 0}</span>
                   </div>
                 </div>
               </div>
@@ -149,9 +149,9 @@ export default async function AdminPropertiesPage({ searchParams }: PageProps) {
               
               {/* Actions */}
               <div className="col-span-12 md:col-span-2 flex items-center justify-end gap-2">
-                <button className="p-2 rounded-lg text-gray-400 hover:text-mosque hover:bg-mosque/20 transition-all tooltip-trigger" title="Edit Property">
+                <Link href={`/admin/properties/${prop.id}/edit`} className="p-2 rounded-lg text-gray-400 hover:text-mosque hover:bg-mosque/20 transition-all tooltip-trigger" title="Edit Property">
                   <span className="material-icons text-xl">edit</span>
-                </button>
+                </Link>
                 <button className="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all tooltip-trigger" title="Delete Property">
                   <span className="material-icons text-xl">delete_outline</span>
                 </button>
