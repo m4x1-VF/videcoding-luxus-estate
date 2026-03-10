@@ -21,6 +21,8 @@ export interface DbProperty {
   is_rental: boolean;
   is_featured: boolean;
   created_at: string;
+  latitude: number | null;
+  longitude: number | null;
 }
 
 const PAGE_SIZE = 8;

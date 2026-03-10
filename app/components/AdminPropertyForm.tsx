@@ -25,6 +25,8 @@ export default function AdminPropertyForm({
   );
   const [status, setStatus] = useState(initialData?.status || "FOR SALE");
   const [location, setLocation] = useState(initialData?.location || "");
+  const [latitude, setLatitude] = useState(initialData?.latitude?.toString() || "");
+  const [longitude, setLongitude] = useState(initialData?.longitude?.toString() || "");
 
   // Area is stored as string like "3200 sqft", extracting number if possible
   const [area, setArea] = useState(() => {
@@ -160,6 +162,8 @@ export default function AdminPropertyForm({
         slug: initialData?.slug || generateSlug(title),
         is_rental: isRental,
         is_featured: isFeatured,
+        latitude: latitude ? parseFloat(latitude) : null,
+        longitude: longitude ? parseFloat(longitude) : null,
       };
 
       if (initialData?.id) {
@@ -490,6 +494,38 @@ export default function AdminPropertyForm({
                 type="text"
               />
             </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-nordic-dark mb-1.5" htmlFor="latitude">
+                  Latitude
+                </label>
+                <input
+                  value={latitude}
+                  onChange={(e) => setLatitude(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-md border-gray-200 bg-white text-nordic-dark placeholder-gray-400 focus:ring-1 focus:ring-mosque focus:border-mosque transition-all text-sm"
+                  id="latitude"
+                  placeholder="-90 to 90"
+                  type="number"
+                  step="any"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-nordic-dark mb-1.5" htmlFor="longitude">
+                  Longitude
+                </label>
+                <input
+                  value={longitude}
+                  onChange={(e) => setLongitude(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-md border-gray-200 bg-white text-nordic-dark placeholder-gray-400 focus:ring-1 focus:ring-mosque focus:border-mosque transition-all text-sm"
+                  id="longitude"
+                  placeholder="-180 to 180"
+                  type="number"
+                  step="any"
+                />
+              </div>
+            </div>
+
             {/* Visual map preview only */}
             <div className="relative h-48 w-full rounded-lg overflow-hidden bg-gray-100 border border-gray-200 group">
               <Image
