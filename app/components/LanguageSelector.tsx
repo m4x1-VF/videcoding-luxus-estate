@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { useTranslations, LOCALES, Locale } from "../i18n";
 
 export default function LanguageSelector() {
@@ -34,9 +35,11 @@ export default function LanguageSelector() {
         className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-nordic-dark/10 hover:border-mosque/40 hover:bg-mosque/5 transition-all text-sm font-medium text-nordic-dark"
         aria-label="Select language"
       >
-        <img 
+        <Image 
           src={current.flag} 
           alt={current.label} 
+          width={20}
+          height={14}
           className="w-5 h-3.5 object-cover rounded-[2px] shadow-sm border border-black/5"
         />
         <span className="hidden sm:inline tracking-wide uppercase text-xs font-bold text-nordic-dark/70">
@@ -66,9 +69,11 @@ export default function LanguageSelector() {
                     : "text-nordic-dark hover:bg-gray-50"
                 }`}
               >
-                <img 
+                <Image 
                   src={l.flag} 
                   alt={l.label} 
+                  width={24}
+                  height={16}
                   className="w-6 h-4 object-cover rounded-[2px] shadow-xs border border-black/5"
                 />
                 <span className="flex-1 text-left">{l.label}</span>

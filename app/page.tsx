@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Navbar from "./components/Navbar";
 import FeaturedPropertyCard from "./components/FeaturedPropertyCard";
 import PropertyCard from "./components/PropertyCard";
@@ -51,7 +52,9 @@ export default async function Home({ searchParams }: HomeProps) {
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <section className="py-12 md:py-16">
-          <SearchSection />
+          <Suspense fallback={<div className="h-16 flex items-center justify-center text-nordic-muted">Loading filters...</div>}>
+            <SearchSection />
+          </Suspense>
         </section>
 
         {!isFiltering && (
@@ -79,7 +82,9 @@ export default async function Home({ searchParams }: HomeProps) {
                     <h2 className="text-2xl font-light text-nordic-dark">{t.home.newInMarketTitle}</h2>
                     <p className="text-nordic-muted mt-1 text-sm">{t.home.newInMarketSubtitle}</p>
                 </div>
-                <StatusTabs />
+                <Suspense fallback={<div className="w-32 h-10 bg-slate-100 rounded-lg animate-pulse" />}>
+                  <StatusTabs />
+                </Suspense>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {paginated.properties.map((property) => (
