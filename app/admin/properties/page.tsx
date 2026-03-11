@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
+import AdminPropertyActions from '@/app/components/AdminPropertyActions';
 
 interface PageProps {
   searchParams: Promise<{ [key: string]: string | undefined }>;
@@ -29,8 +30,9 @@ export default async function AdminPropertiesPage({ searchParams }: PageProps) {
   }
 
   const total = properties?.length || 0;
-  const active = properties?.filter(p => !p.status?.toLowerCase().includes('sold'))?.length || 0;
-  const pending = properties?.filter(p => p.status?.toLowerCase().includes('pending') || p.status?.toLowerCase().includes('reserved'))?.length || 0;
+  const inactiveCount = properties?.filter(p => p.is_active === false)?.length || 0;
+  const active = properties?.filter(p => p.is_active !== false && !p.status?.toLowerCase().includes('sold'))?.length || 0;
+  const pending = properties?.filter(p => p.is_active !== false && (p.status?.toLowerCase().includes('pending') || p.status?.toLowerCase().includes('reserved')))?.length || 0;
 
   const params = await searchParams;
   const currentPage = Math.max(1, parseInt(params.page || "1", 10));
@@ -57,7 +59,7 @@ export default async function AdminPropertiesPage({ searchParams }: PageProps) {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-white p-5 rounded-xl border border-mosque/10 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-gray-500">Total Listings</p>
@@ -85,6 +87,15 @@ export default async function AdminPropertiesPage({ searchParams }: PageProps) {
             <span className="material-icons">pending</span>
           </div>
         </div>
+        <div className="bg-white p-5 rounded-xl border border-red-100 shadow-sm flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-gray-500">Inactive Properties</p>
+            <p className="text-2xl font-bold text-red-600 mt-1">{inactiveCount}</p>
+          </div>
+          <div className="h-10 w-10 rounded-full bg-red-50 flex items-center justify-center text-red-500">
+            <span className="material-icons">visibility_off</span>
+          </div>
+        </div>
       </div>
 
       {/* Property List Container */}
@@ -100,20 +111,31 @@ export default async function AdminPropertiesPage({ searchParams }: PageProps) {
         {paginatedProperties?.map((prop) => {
           const isSold = prop.status?.toLowerCase().includes('sold');
           const isPending = prop.status?.toLowerCase().includes('reserved') || prop.status?.toLowerCase().includes('pending');
-          const badgeClass = isSold 
-            ? "bg-gray-100  text-gray-600  border border-gray-200 "
-            : isPending 
-            ? "bg-orange-100  text-orange-700  border border-orange-200 "
-            : "bg-mosque/10 text-mosque border border-mosque/10";
-          const dotClass = isSold ? "bg-gray-500" : isPending ? "bg-orange-500" : "bg-mosque";
+          const isInactive = prop.is_active === false;
+          
+          let badgeClass = "bg-mosque/10 text-mosque border border-mosque/10";
+          let dotClass = "bg-mosque";
+          let displayStatus = prop.status;
+
+          if (isInactive) {
+            badgeClass = "bg-red-100 text-red-700 border border-red-200";
+            dotClass = "bg-red-500";
+            displayStatus = "Inactive";
+          } else if (isSold) {
+             badgeClass = "bg-gray-100 text-gray-600 border border-gray-200";
+             dotClass = "bg-gray-500";
+          } else if (isPending) {
+             badgeClass = "bg-orange-100 text-orange-700 border border-orange-200";
+             dotClass = "bg-orange-500";
+          }
 
           return (
-            <div key={prop.id} className="group grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-5 border-b border-gray-100 hover:bg-background-light transition-colors items-center">
+            <div key={prop.id} className={`group grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-5 border-b border-gray-100 hover:bg-background-light transition-colors items-center ${isInactive ? 'opacity-70' : ''}`}>
               {/* Property Details */}
               <div className="col-span-12 md:col-span-6 flex gap-4 items-center">
                 <div className="relative h-20 w-28 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200">
                   {(prop.images && prop.images.length > 0) ? (
-                    <Image src={prop.images[0]} alt={prop.title || 'Property'} fill sizes="112px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <Image src={prop.images[0]} alt={prop.title || 'Property'} fill sizes="112px" className={`object-cover transition-transform duration-500 group-hover:scale-105 ${isInactive ? 'grayscale' : ''}`} />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gray-200">
                       <span className="material-icons text-gray-400">home</span>
@@ -121,7 +143,9 @@ export default async function AdminPropertiesPage({ searchParams }: PageProps) {
                   )}
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-nordic group-hover:text-mosque transition-colors cursor-pointer">{prop.title}</h3>
+                  <h3 className="text-lg font-bold text-nordic group-hover:text-mosque transition-colors cursor-pointer">
+                    {prop.title} {isInactive && <span className="text-xs text-red-500 ml-2 font-normal">(Inactive)</span>}
+                  </h3>
                   <p className="text-sm text-gray-500">{prop.location}</p>
                   <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
                     <span className="flex items-center gap-1"><span className="material-icons text-[14px]">bed</span> {prop.beds || 0} Beds</span>
@@ -143,7 +167,7 @@ export default async function AdminPropertiesPage({ searchParams }: PageProps) {
               <div className="col-span-6 md:col-span-2">
                 <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${badgeClass}`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${dotClass} mr-1.5`}></span>
-                  {prop.status}
+                  {displayStatus}
                 </span>
               </div>
               
@@ -152,9 +176,7 @@ export default async function AdminPropertiesPage({ searchParams }: PageProps) {
                 <Link href={`/admin/properties/${prop.id}/edit`} className="p-2 rounded-lg text-gray-400 hover:text-mosque hover:bg-mosque/20 transition-all tooltip-trigger" title="Edit Property">
                   <span className="material-icons text-xl">edit</span>
                 </Link>
-                <button className="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all tooltip-trigger" title="Delete Property">
-                  <span className="material-icons text-xl">delete_outline</span>
-                </button>
+                <AdminPropertyActions propertyId={prop.id} isActive={prop.is_active !== false} />
               </div>
             </div>
           )

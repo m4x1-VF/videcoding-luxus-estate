@@ -49,6 +49,9 @@ export default function AdminPropertyForm({
   const [isFeatured, setIsFeatured] = useState(
     initialData?.is_featured ?? false,
   );
+  const [isActive, setIsActive] = useState(
+    initialData?.is_active ?? true,
+  );
 
   // DB Images
   const [existingImages, setExistingImages] = useState<string[]>(
@@ -172,6 +175,7 @@ export default function AdminPropertyForm({
         slug: initialData?.slug || generateSlug(title),
         is_rental: isRental,
         is_featured: isFeatured,
+        is_active: isActive,
         latitude: latitude ? parseFloat(latitude) : null,
         longitude: longitude ? parseFloat(longitude) : null,
       };
@@ -705,12 +709,11 @@ export default function AdminPropertyForm({
 
             <hr className="border-gray-100" />
 
-            {/* Is Featured Checkbox (DB tracking) */}
             <div>
               <h3 className="font-bold text-nordic-dark mb-3 uppercase tracking-wider text-xs text-gray-500">
                 Visibility
               </h3>
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <label className="flex items-center gap-2.5 cursor-pointer group">
                   <input
                     checked={isFeatured}
@@ -720,6 +723,18 @@ export default function AdminPropertyForm({
                   />
                   <span className="text-sm text-gray-700 group-hover:text-nordic-dark transition-colors">
                     Is Featured Property
+                  </span>
+                </label>
+                
+                <label className="flex items-center gap-2.5 cursor-pointer group">
+                  <input
+                    checked={isActive}
+                    onChange={(e) => setIsActive(e.target.checked)}
+                    className="w-4 h-4 text-mosque border-gray-300 rounded focus:ring-mosque"
+                    type="checkbox"
+                  />
+                  <span className="text-sm text-gray-700 group-hover:text-nordic-dark transition-colors">
+                    Property is Active
                   </span>
                 </label>
               </div>

@@ -3,7 +3,10 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: { persistSession: false },
+  global: { fetch: (url, init) => fetch(url, { ...init, cache: 'no-store' }) }
+});
 
 export interface DbProperty {
   id: string;
@@ -20,6 +23,7 @@ export interface DbProperty {
   slug: string | null;
   is_rental: boolean;
   is_featured: boolean;
+  is_active: boolean;
   created_at: string;
   latitude: number | null;
   longitude: number | null;
@@ -31,6 +35,7 @@ export async function getFeaturedProperties(): Promise<DbProperty[]> {
   const { data, error } = await supabase
     .from("properties")
     .select("*")
+    .eq("is_active", true)
     .eq("is_featured", true)
     .order("created_at", { ascending: false })
     .limit(4);
@@ -53,7 +58,10 @@ export interface PropertyFilters {
   amenities?: string[];
 }
 
-export async function getPaginatedProperties(page: number, filters?: PropertyFilters): Promise<{
+export async function getPaginatedProperties(
+  page: number,
+  filters?: PropertyFilters,
+): Promise<{
   properties: DbProperty[];
   totalCount: number;
   totalPages: number;
@@ -65,12 +73,15 @@ export async function getPaginatedProperties(page: number, filters?: PropertyFil
   let query = supabase
     .from("properties")
     .select("*", { count: "exact" })
+    .eq("is_active", true)
     .eq("is_featured", false)
     .order("created_at", { ascending: false })
     .range(from, to);
 
   if (filters?.query) {
-    query = query.or(`title.ilike.%${filters.query}%,location.ilike.%${filters.query}%`);
+    query = query.or(
+      `title.ilike.%${filters.query}%,location.ilike.%${filters.query}%`,
+    );
   }
   if (filters?.type && filters.type !== "All" && filters.type !== "Any Type") {
     query = query.ilike("title", `%${filters.type}%`);
@@ -111,17 +122,22 @@ export async function getPaginatedProperties(page: number, filters?: PropertyFil
 }
 
 // UUID regex pattern
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export async function getPropertyBySlugOrId(slugOrId: string): Promise<DbProperty | null> {
+export async function getPropertyBySlugOrId(
+  slugOrId: string,
+): Promise<DbProperty | null> {
   // If it looks like a UUID, do a direct id lookup (no slug query — prevents type cast errors)
   if (UUID_REGEX.test(slugOrId)) {
     const { data, error } = await supabase
       .from("properties")
       .select("*")
+      .eq("is_active", true)
       .eq("id", slugOrId)
       .maybeSingle();
-    if (error) console.error(`Error fetching property by id (${slugOrId}):`, error);
+    if (error)
+      console.error(`Error fetching property by id (${slugOrId}):`, error);
     return data;
   }
 
@@ -129,8 +145,11 @@ export async function getPropertyBySlugOrId(slugOrId: string): Promise<DbPropert
   const { data, error } = await supabase
     .from("properties")
     .select("*")
+    .eq("is_active", true)
     .eq("slug", slugOrId)
     .maybeSingle();
-  if (error) console.error(`Error fetching property by slug (${slugOrId}):`, error);
+
+  if (error)
+    console.error(`Error fetching property by slug (${slugOrId}):`, error);
   return data;
 }

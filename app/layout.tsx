@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import "./globals.css";
 import { LanguageProvider } from "./i18n";
 import { getLocaleFromCookieHeader, Locale } from "./i18n/config";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Luxe Estate - Premium Real Estate",
@@ -41,6 +42,24 @@ export default async function RootLayout({
         <LanguageProvider initialLocale={initialLocale}>
           {children}
         </LanguageProvider>
+        <Toaster 
+          position="bottom-right" 
+          toastOptions={{
+            style: {
+              background: '#006655', // mosque color
+              color: 'white',
+              border: 'none',
+            },
+            actionButtonStyle: {
+              background: 'white',
+              color: '#006655',
+            },
+            cancelButtonStyle: {
+              background: 'rgba(255,255,255,0.2)',
+              color: 'white',
+            }
+          }}
+        />
       </body>
     </html>
   );
